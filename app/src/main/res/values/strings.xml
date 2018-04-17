@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">googlemaptest</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="place_api">AIzaSyC3L5cQpZH1iEMbKQZICebrDDfGaxDiSNI</string>
+    <string name="direction_api">AIzaSyA1916xA7UxvWV-aQbkgZ_vMrnwAxzW8dA	</string>
+    <string name="title_activity_permissionpage">Permissionpage</string>
+</resources>
