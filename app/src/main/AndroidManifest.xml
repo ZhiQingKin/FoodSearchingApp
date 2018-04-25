@@ -34,17 +34,20 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".View.MapsActivity"
+            android:name=".View.ActivityView.MapsActivity"
             android:label="@string/title_activity_maps" />
-        <activity android:name=".View.PermissionCheck">
+        <activity android:name=".View.ActivityView.PermissionCheck">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".View.show_navigationdata" />
-        <activity android:name=".View.Listview"></activity>
+        <activity android:name=".View.ActivityView.ShowNavigationDataPage" />
+        <activity android:name=".View.ActivityView.Listview" />
+        <activity
+            android:name=".View.ActivityView.NavigationMap"
+            android:label="@string/title_activity_navigation_map"></activity>
     </application>
 
 </manifest>

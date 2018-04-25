@@ -1,4 +1,4 @@
-package com.example.user.maptest.Model
+package com.example.user.maptest.Model.Asset
 
 import android.util.Log
 import java.io.Serializable
@@ -25,12 +25,4 @@ class PlaceData : Serializable{
 
 
 
-    public fun geturl_photoreference (): String
-    {
-        val googlephotoUrl = StringBuilder("https://maps.googleapis.com/maps/api/place/photo?")
-        googlephotoUrl.append("maxwidth=400")
-        googlephotoUrl.append("&photoreference=$photoreference")
-        googlephotoUrl.append("&key=" + "AIzaSyAoJHWDnTqRGbNfVKT2XdxOcQShDDlgndQ")
-        return googlephotoUrl.toString()
-    }
 }

@@ -1,4 +1,4 @@
-package com.example.user.maptest.View
+package com.example.user.maptest.View.ActivityView
 
 import android.Manifest
 import android.content.Intent
@@ -27,7 +27,7 @@ class PermissionCheck : AppCompatActivity() {
         }
         else
         {
-            var i : Intent = Intent(applicationContext,MapsActivity::class.java)
+            var i : Intent = Intent(applicationContext, MapsActivity::class.java)
             startActivity(i)
             finish()
         }
@@ -38,7 +38,7 @@ class PermissionCheck : AppCompatActivity() {
         if (requestCode == REQUEST_LOCATION_CODE) {
             if (grantResults.count() > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                    var i : Intent = Intent(applicationContext,MapsActivity::class.java)
+                    var i : Intent = Intent(applicationContext, MapsActivity::class.java)
                     startActivity(i)
                     finish()
                 }

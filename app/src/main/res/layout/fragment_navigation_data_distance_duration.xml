@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".View.Fragment.NavigationDataDistanceDuration">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/TextDuration"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/border"
+            android:drawableLeft="@drawable/dricingicon"
+            android:text="Duration :"
+            android:textColor="@color/colorBlack"
+            android:textSize="16dp" />
+
+        <TextView
+            android:id="@+id/TextDistance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/border"
+            android:drawableLeft="@drawable/distance"
+            android:text="Distance :"
+            android:textColor="@color/colorBlack"
+            android:textSize="16dp" />
+
+        <TextView
+            android:id="@+id/Textdurationwalk"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/border"
+            android:drawableLeft="@drawable/walkingicon"
+            android:text="Distance :"
+            android:textColor="@color/colorBlack"
+            android:textSize="16dp" />
+    </LinearLayout>
+
+
+</FrameLayout>

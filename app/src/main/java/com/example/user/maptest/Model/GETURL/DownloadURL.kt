@@ -1,29 +1,21 @@
-package com.example.user.maptest.Model
+package com.example.user.maptest.Model.GETURL
 
-import android.util.Log
-
-import java.io.BufferedReader
-import java.io.IOException
-import java.io.InputStream
-import java.io.InputStreamReader
-import java.net.HttpURLConnection
-import java.net.MalformedURLException
-import java.net.URL
+import com.example.user.maptest.Model.Interface.Model
 import com.squareup.okhttp.OkHttpClient
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
+import com.squareup.okhttp.Request
+import com.squareup.okhttp.Response
+import java.io.IOException
 
 /**
  * @author Priyanka
  */
 
 
-class DownloadURL {
+class DownloadURL : Model {
 
 
     @Throws(IOException::class)
-    fun readUrl(myUrl: String): String? {
+    override fun readUrl(myUrl: String): String? {
         var Client : OkHttpClient = OkHttpClient()
         var req : Request = Request.Builder().url(myUrl).build()
         var res : Response ?= null

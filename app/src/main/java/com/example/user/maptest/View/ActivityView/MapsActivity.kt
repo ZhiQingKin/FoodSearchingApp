@@ -1,12 +1,13 @@
 @file:Suppress("DEPRECATION")
 
-package com.example.user.maptest.View
+package com.example.user.maptest.View.ActivityView
 
 import android.Manifest
+import android.app.ProgressDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
-import android.os.Build
+import android.media.Image
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
@@ -18,33 +19,44 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
 import android.widget.Toast
-import android.support.v4.app.ActivityCompat
 import android.util.Log
+import android.view.View
+import android.widget.ImageView
+import com.example.user.maptest.Model.Asset.PlaceData
+import com.example.user.maptest.Model.GETURL.URLGenerator
+import com.example.user.maptest.Presenter.Interface.Presenter
 import kotlinx.android.synthetic.main.activity_maps.*
-import com.example.user.maptest.Presenter.GetDirectionsData
-import com.example.user.maptest.Presenter.GetNearbyPlacesData
+import com.example.user.maptest.Presenter.ProcessDataWithRxjava.GetNearbyPlacesData
 import com.example.user.maptest.R
+import com.example.user.maptest.Util.CameraMovement
+import com.example.user.maptest.Util.MarkerPlacement
+import com.example.user.maptest.View.Interface.MainViewInterface
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.common.GoogleApiAvailability;
+import java.util.HashMap
+import com.google.android.gms.maps.model.LatLng
+import android.widget.TextView
+import com.example.user.maptest.View.Adapter.MarkerInfoWindowAdapter
+import com.google.android.gms.maps.GoogleMap
+import com.squareup.picasso.Picasso
 
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback ,GoogleApiClient.ConnectionCallbacks,GoogleApiClient.OnConnectionFailedListener,LocationListener
-,GoogleMap.OnMarkerClickListener,GoogleMap.OnMapClickListener {
-
+,GoogleMap.OnMapClickListener,MainViewInterface,GoogleMap.OnInfoWindowClickListener {
     private lateinit var mMap: GoogleMap
     private lateinit var client: GoogleApiClient
     private lateinit var locationRequest: LocationRequest
-    private var lastlocation: Location? = null
     private var currentlocmarket: Marker? = null
+    private var lastlocation: Location? = null
     var firsttry: Boolean = true
     var PROXIMITY_RADIUS: Double = 1000.toDouble()
     var latitude: Double = 0.toDouble()
     var longitude: Double = 0.toDouble()
-    var end_latitude: Double = 0.toDouble()
-    var end_longitude:Double = 0.toDouble()
-    lateinit var getNearbyPlacesData: GetNearbyPlacesData
-    lateinit var getDirectionsData: GetDirectionsData
+    lateinit var presenter: Presenter
+    lateinit var urlGenerator: URLGenerator
+    lateinit var cameraMovement:CameraMovement
+    lateinit var markerPlacement: MarkerPlacement
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,32 +72,31 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback ,GoogleApiClient.Co
         val mapFragment = supportFragmentManager
                 .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
-
+        urlGenerator = URLGenerator()
+        cameraMovement = CameraMovement()
+        markerPlacement = MarkerPlacement()
         checkres.setOnClickListener({
             display_restaurant()
         })
 
+        showlist.setOnClickListener({
+            presenter.CheckArray()
+        })
+
     }
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
+
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-        mMap.setOnMarkerClickListener(this)
         mMap.setOnMapClickListener(this)
-        getNearbyPlacesData = GetNearbyPlacesData(mMap, this)
-        getDirectionsData = GetDirectionsData()
+        presenter = GetNearbyPlacesData(mMap, this,this)
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             buildGoogleApiClient()
             mMap.setMyLocationEnabled(true)
         }
+        mMap.setOnInfoWindowClickListener(this)
+        var markerInfoWinndowAdapter = MarkerInfoWindowAdapter(this)
+        mMap.setInfoWindowAdapter(markerInfoWinndowAdapter)
     }
 
 
@@ -110,14 +121,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback ,GoogleApiClient.Co
         {
             currentlocmarket!!.remove()
         }
-        val markerOptions = MarkerOptions()
-        markerOptions.position(latlng)
-        markerOptions.title("FML PERSON")
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
 
-        currentlocmarket = mMap!!.addMarker(markerOptions)
+        currentlocmarket = mMap!!.addMarker(markerPlacement.PlaceMarker(latlng,"FML PERSON",mMap))
         if (firsttry) {
-            movetouser()
+            cameraMovement.CameraMovetoUser(latitude,longitude,mMap)
             firsttry = false
         }
 
@@ -147,53 +154,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback ,GoogleApiClient.Co
     }
 
 
-    private fun getUrl(latitude: Double, longitude: Double, nearbyPlace: String): String {
-
-        val googlePlaceUrl = StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?")
-        googlePlaceUrl.append("location=$latitude,$longitude")
-        googlePlaceUrl.append("&radius=$PROXIMITY_RADIUS")
-        googlePlaceUrl.append("&type=$nearbyPlace")
-        googlePlaceUrl.append("&sensor=true")
-        googlePlaceUrl.append("&key=" + "AIzaSyC3L5cQpZH1iEMbKQZICebrDDfGaxDiSNI")
-        Log.d("MapsActivity", "url = " + googlePlaceUrl.toString())
-
-        return googlePlaceUrl.toString()
-    }
-
-
-    fun display_restaurant() {
+    private fun display_restaurant() {
         mMap.clear()
         val resturant = "restaurant"
-        val url: String = getUrl(latitude, longitude, resturant)
-        getNearbyPlacesData.seturl(url)
-        getNearbyPlacesData.setmap(mMap)
-        getNearbyPlacesData.startthreat()
-        Toast.makeText(this@MapsActivity, "Showing Nearby Restaurants", Toast.LENGTH_SHORT).show()
-    }
-
-
-    fun movetouser() {
-        val cameraPosition = CameraPosition.Builder()
-                .target(LatLng(latitude, longitude))
-                .zoom(16f)                   // Sets the zoom
-                .bearing(90f)                // Sets the orientation of the camera to east
-                .tilt(30f)                   // Sets the tilt of the camera to 30 degrees
-                .build()
-        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+        val url: String = urlGenerator.getPlaceUrl(latitude, longitude, resturant,PROXIMITY_RADIUS)
+        presenter.seturl(url)
+        presenter.startthreat()
     }
 
 
 
-    private fun getDirectionsUrl(): String {
-        val googleDirectionsUrl = StringBuilder("https://maps.googleapis.com/maps/api/directions/json?")
-        googleDirectionsUrl.append("origin=$latitude,$longitude")
-        googleDirectionsUrl.append("&destination=$end_latitude,$end_longitude")
-        googleDirectionsUrl.append("&key=" + "AIzaSyA1916xA7UxvWV-aQbkgZ_vMrnwAxzW8dA")
 
-        return googleDirectionsUrl.toString()
-    }
-
-    private fun CheckGooglePlayServices() : Boolean {
+    override fun CheckGooglePlayServices() : Boolean {
         var googleAPI:GoogleApiAvailability = GoogleApiAvailability.getInstance();
         var result:Int = googleAPI.isGooglePlayServicesAvailable(this);
         if(result != ConnectionResult.SUCCESS) {
@@ -206,38 +178,77 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback ,GoogleApiClient.Co
         return true;
     }
 
-    override fun onMarkerClick(marker: Marker?): Boolean {
-        Toast.makeText(this@MapsActivity,"let start",Toast.LENGTH_LONG).show()
-        end_latitude = marker!!.position.latitude
-        end_longitude = marker!!.position.longitude
-        var url: String = getDirectionsUrl()
-        getDirectionsData.setmap(mMap)
-        getDirectionsData.seturl(url)
-        getDirectionsData.startthreat()
-        return true
-    }
 
-    fun displaynextview()
+    override fun displaynextview()
     {
-        var i : Intent = Intent(applicationContext,Listview::class.java)
+        var i : Intent = Intent(applicationContext, Listview::class.java)
         var bundle:Bundle  = Bundle()
-        bundle.putSerializable("place_array",getNearbyPlacesData.placeData)
+        bundle.putSerializable("place_array",presenter.getnearbyPlaces())
         i.putExtras(bundle)
+        i.putExtra("curlat",latitude)
+        i.putExtra("curlng",longitude)
         startActivity(i)
     }
-    override fun onMapClick(pos: LatLng?) {
 
+    override fun displayerror()
+    {
+        Toast.makeText(this@MapsActivity, "Empty String Please Select Location First", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onMapClick(pos: LatLng?) {
         displayonmap(pos)
     }
 
-
-    fun displayonmap(latlng:LatLng?)
+    override fun displayonmap(latlng:LatLng?)
     {
         mMap.clear()
         val resturant = "restaurant"
-        val url: String = getUrl(latlng!!.latitude, latlng.longitude, resturant)
-        getNearbyPlacesData.seturl(url)
-        getNearbyPlacesData.setmap(mMap)
-        getNearbyPlacesData.startthreat()
+        val url: String = urlGenerator.getPlaceUrl(latlng!!.latitude, latlng!!.longitude, resturant,PROXIMITY_RADIUS)
+        presenter.seturl(url)
+        presenter.startthreat()
     }
+
+    public override fun showNearbyPlaces(nearbyPlaceList: List<HashMap<String, String>>) :  ArrayList<PlaceData>
+    {
+        var placesData : ArrayList<PlaceData> = ArrayList<PlaceData>()
+        for (i in nearbyPlaceList.indices) {
+
+            val markerOptions = MarkerOptions()
+            val googlePlace = nearbyPlaceList[i]
+
+            val placeName = googlePlace["place_name"]
+            val vicinity = googlePlace["vicinity"]
+            val rating = googlePlace["rating"]
+            val photoreference = googlePlace["photoreference"]
+            val place_id = googlePlace["place_id"]
+            val lat = java.lang.Double.parseDouble(googlePlace["lat"])
+            val lng = java.lang.Double.parseDouble(googlePlace["lng"])
+
+            placesData.add(PlaceData(placeName, vicinity, lat, lng, rating, place_id, photoreference))
+
+            val latLng = LatLng(lat, lng)
+            markerPlacement.PlaceMarkerBlue(latLng,placeName!!,mMap,photoreference!!)
+
+        }
+
+        return placesData
+    }
+
+    override fun onInfoWindowClick(marker : Marker?) {
+       val retriveData = presenter.CheckWithinList(marker!!.title)
+        if(retriveData!=null)
+        {
+            var i : Intent = Intent(applicationContext, ShowNavigationDataPage::class.java)
+            i.putExtra("place_data",retriveData)
+            i.putExtra("curlat",latitude)
+            i.putExtra("curlng",longitude)
+            startActivity(i)
+        }
+        else
+        {
+            Toast.makeText(this,"This is User",Toast.LENGTH_LONG).show()
+        }
+    }
+
+
 }
