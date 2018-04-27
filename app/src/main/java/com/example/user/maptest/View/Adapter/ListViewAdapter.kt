@@ -38,7 +38,7 @@ class ListViewAdapter : BaseAdapter {
             val url: String = urlGenerator.geturl_photoreference(places[pos].photoreference!!)
             Picasso.get().load(url).fit().into(RestaurantImage)
         } else {
-            Picasso.get().load("http://www.gstatic.com/webp/gallery/1.jpg").fit().into(RestaurantImage)
+            Picasso.get().load(R.drawable.errorloadimage).fit().into(RestaurantImage)
         }
         val ResRating = rowMain.findViewById<RatingBar>(R.id.ResRating)
         ResRating.rating = places[pos].rating!!.toFloat()

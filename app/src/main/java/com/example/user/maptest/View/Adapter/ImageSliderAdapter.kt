@@ -5,6 +5,7 @@ import android.support.v4.view.PagerAdapter
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import com.example.user.maptest.R
 import com.squareup.picasso.Picasso
 
 class ImageSliderAdapter : PagerAdapter {
@@ -31,7 +32,7 @@ class ImageSliderAdapter : PagerAdapter {
         var imageView: ImageView = ImageView(context)
         if (UrlContainer[position] == "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=error&key=AIzaSyAoJHWDnTqRGbNfVKT2XdxOcQShDDlgndQ") {
             Picasso.get()
-                    .load("http://www.gstatic.com/webp/gallery/1.jpg")
+                    .load(R.drawable.errorloadimage)
                     .fit()
                     .into(imageView)
             container!!.addView(imageView)

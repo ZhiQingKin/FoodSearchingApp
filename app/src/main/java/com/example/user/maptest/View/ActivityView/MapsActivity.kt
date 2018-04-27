@@ -6,11 +6,16 @@ import android.Manifest
 import android.app.ProgressDialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.view.WindowManager
+import android.location.Address
+import android.location.Geocoder
 import android.location.Location
 import android.media.Image
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
+import android.text.Editable
+import android.text.TextWatcher
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationListener
@@ -37,9 +42,16 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import java.util.HashMap
 import com.google.android.gms.maps.model.LatLng
 import android.widget.TextView
+import com.example.user.maptest.Util.AlertDialogController
 import com.example.user.maptest.View.Adapter.MarkerInfoWindowAdapter
+import com.example.user.maptest.View.Adapter.PlaceAutocompleteAdapter
+import com.example.user.maptest.View.Adapter.SearchTextChangeAdapter
+import com.example.user.maptest.View.Adapter.TextViewAdapter
+import com.google.android.gms.location.places.Place
+import com.google.android.gms.location.places.Places
 import com.google.android.gms.maps.GoogleMap
 import com.squareup.picasso.Picasso
+import java.io.IOException
 
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback ,GoogleApiClient.ConnectionCallbacks,GoogleApiClient.OnConnectionFailedListener,LocationListener
@@ -57,6 +69,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback ,GoogleApiClient.Co
     lateinit var urlGenerator: URLGenerator
     lateinit var cameraMovement:CameraMovement
     lateinit var markerPlacement: MarkerPlacement
+    lateinit var alertDialogController: AlertDialogController
+    var latLngBounds: LatLngBounds = LatLngBounds(LatLng(-40.0, -168.0), LatLng(71.0, 136.0))
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,6 +89,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback ,GoogleApiClient.Co
         urlGenerator = URLGenerator()
         cameraMovement = CameraMovement()
         markerPlacement = MarkerPlacement()
+        alertDialogController = AlertDialogController()
         checkres.setOnClickListener({
             display_restaurant()
         })
@@ -83,12 +98,17 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback ,GoogleApiClient.Co
             presenter.CheckArray()
         })
 
+        clearTextBtn.setOnClickListener({
+            autocompletesearch.text.clear()
+        })
+
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         mMap.setOnMapClickListener(this)
         presenter = GetNearbyPlacesData(mMap, this,this)
+
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             buildGoogleApiClient()
@@ -97,6 +117,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback ,GoogleApiClient.Co
         mMap.setOnInfoWindowClickListener(this)
         var markerInfoWinndowAdapter = MarkerInfoWindowAdapter(this)
         mMap.setInfoWindowAdapter(markerInfoWinndowAdapter)
+        val  mPlaceAutocompleteAdapter = PlaceAutocompleteAdapter(this, client, latLngBounds, null)
+        autocompletesearch.setAdapter(mPlaceAutocompleteAdapter)
+        val onEditorActionListener = TextViewAdapter(this)
+        autocompletesearch.setOnEditorActionListener(onEditorActionListener)
+        val searchTextWatcher = SearchTextChangeAdapter(autocompletesearch,clearTextBtn)
+        autocompletesearch.addTextChangedListener(searchTextWatcher)
     }
 
 
@@ -105,6 +131,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback ,GoogleApiClient.Co
         client = GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
+                .addApi(Places.GEO_DATA_API)
+                .addApi(Places.PLACE_DETECTION_API)
+                .enableAutoManage(this, this)
                 .addApi(LocationServices.API)
                 .build()
 
@@ -161,8 +190,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback ,GoogleApiClient.Co
         presenter.seturl(url)
         presenter.startthreat()
     }
-
-
 
 
     override fun CheckGooglePlayServices() : Boolean {
@@ -250,5 +277,27 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback ,GoogleApiClient.Co
         }
     }
 
+    override fun geoLocate() {
+        var edit_text_data = autocompletesearch.text.toString()
+        var geocoder: Geocoder = Geocoder(this)
+        var list_of_address:List<Address>  = ArrayList()
+        try{
+            list_of_address = geocoder.getFromLocationName(edit_text_data, 2)
+        }
+        catch (e: IOException){
+            e.printStackTrace()
+        }
+
+        if (list_of_address!!.count() > 0) {
+            val address = list_of_address.get(0)
+            displayonmap(LatLng(address.latitude,address.longitude))
+            cameraMovement.CameraMovetoUser(address.latitude,address.longitude,mMap)
+        }
+
+    }
+
+    override fun onBackPressed() {
+        alertDialogController.CreateExitDialog(this)
+    }
 
 }

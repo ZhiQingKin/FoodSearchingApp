@@ -79,12 +79,13 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/backBtn"
+            android:id="@+id/googleNavigateBtn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Back"
-            android:textSize="18dp" />
+            android:text="Google Naviigate"
+            android:textSize="15dp"
+            android:drawableLeft="@drawable/googleg_standard_color_18"/>
 
         <Button
             android:id="@+id/navigateBtn"
@@ -92,7 +93,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Navigate"
-            android:textSize="18dp" />
+            android:textSize="15dp"
+            android:drawableLeft="@drawable/iconforselfnavigate"/>
 
 
     </LinearLayout>

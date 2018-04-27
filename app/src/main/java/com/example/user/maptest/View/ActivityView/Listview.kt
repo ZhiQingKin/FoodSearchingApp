@@ -4,6 +4,7 @@ import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.MenuItem
 import android.widget.AdapterView
 import com.example.user.maptest.Model.Asset.PlaceData
 import com.example.user.maptest.R
@@ -25,6 +26,9 @@ class Listview : AppCompatActivity(){
         place_list_view.setOnItemClickListener(AdapterView.OnItemClickListener { parent, view, position, id ->
             Log.d("position : ",position.toString())
             displaynextview(position) })
+        supportActionBar!!.setDisplayShowHomeEnabled(true)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar!!.setTitle("Restaurant Available")
     }
 
     fun displaynextview(position:Int)
@@ -33,8 +37,17 @@ class Listview : AppCompatActivity(){
         i.putExtra("place_data",place_array[position])
         i.putExtra("curlat",currentlatitude)
         i.putExtra("curlng",currentlongtide)
-        finish()
         startActivity(i)
     }
 
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        var id:Int = item!!.itemId
+
+        if(id==android.R.id.home)
+        {
+            finish()
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
 }

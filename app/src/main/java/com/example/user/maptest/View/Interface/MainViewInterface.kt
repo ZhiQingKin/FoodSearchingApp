@@ -10,4 +10,5 @@ interface MainViewInterface {
     fun CheckGooglePlayServices(): Boolean
     fun displayerror()
     public fun showNearbyPlaces(nearbyPlaceList: List<HashMap<String, String>>): ArrayList<PlaceData>
+    fun geoLocate()
 }

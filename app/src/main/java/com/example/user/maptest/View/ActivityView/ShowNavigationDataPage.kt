@@ -1,9 +1,11 @@
 package com.example.user.maptest.View.ActivityView
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
+import android.view.MenuItem
 import com.example.user.maptest.Model.Asset.PlaceData
 import com.example.user.maptest.Model.Asset.Review
 import com.example.user.maptest.Model.GETURL.URLGenerator
@@ -56,16 +58,16 @@ class ShowNavigationDataPage : AppCompatActivity(), DataPageInterface {
         currentlongtide = intent.getDoubleExtra("curlng", 0.1)
         init_Threat_For_Duration_Driving()
         init_Threat_For_Duration_Walking()
-
-
-
+        supportActionBar!!.setDisplayShowHomeEnabled(true)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar!!.setTitle(data.placeName)
 
         navigateBtn.setOnClickListener({
             DisplayNavigationPage()
         })
 
-        backBtn.setOnClickListener({
-            finish()
+        googleNavigateBtn.setOnClickListener({
+            openGoogleMapNavigation()
         })
     }
 
@@ -97,7 +99,6 @@ class ShowNavigationDataPage : AppCompatActivity(), DataPageInterface {
         NavigationIntent.putExtra("lat", data.lat)
         NavigationIntent.putExtra("lng", data.lng)
         NavigationIntent.putExtra("PlaceName", data.placeName)
-        finish()
         startActivity(NavigationIntent)
     }
 
@@ -170,4 +171,22 @@ class ShowNavigationDataPage : AppCompatActivity(), DataPageInterface {
         progressDialogController.progressBarHide()
     }
 
+
+    private fun openGoogleMapNavigation()
+    {
+        val uri = "http://maps.google.com/maps?f=d&hl=en&saddr=$currentlatitude,$currentlongtide&daddr=${data.lat},${data.lng}"
+        val intent = Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri))
+        startActivity(Intent.createChooser(intent, "Select an application"))
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        var id:Int = item!!.itemId
+
+        if(id==android.R.id.home)
+        {
+            finish()
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
 }

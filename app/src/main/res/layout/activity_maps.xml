@@ -16,7 +16,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:layout_weight="1"
-            android:text="check self location" />
+            android:drawableLeft="@drawable/searchiconbutton"
+            android:singleLine="true"
+            android:text="search Nearby" />
 
         <Button
             android:id="@+id/showlist"
@@ -24,9 +26,51 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:layout_weight="1"
-            android:text="Show List" />
+            android:text="Show List"
+            android:drawableLeft="@drawable/iconforbutton" />
 
     </LinearLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:orientation="horizontal"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:background="@drawable/border">
+
+        <ImageView
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/search"
+            android:id="@+id/searchicon"/>
+
+        <AutoCompleteTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/searchicon"
+            android:layout_centerVertical="true"
+            android:textSize="15dp"
+            android:textColor="@color/colorBlack"
+            android:id="@+id/autocompletesearch"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:background="@null"
+            android:hint="Please Enter Your Address Here"
+            android:imeOptions="actionSearch"
+            />
+        <ImageView
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_alignRight="@+id/autocompletesearch"
+            android:id="@+id/clearTextBtn"
+            android:layout_centerVertical="true"
+            android:visibility="gone"
+            android:src="@drawable/deletetextimage"/>
+
+
+    </RelativeLayout>
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"

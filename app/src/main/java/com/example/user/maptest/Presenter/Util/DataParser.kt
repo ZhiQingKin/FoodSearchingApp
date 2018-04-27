@@ -1,6 +1,7 @@
 package com.example.user.maptest.Presenter.Util
 
 
+import android.util.Log
 import com.example.user.maptest.Model.Asset.Review
 import com.example.user.maptest.Presenter.Interface.IDataPerserPresenter
 import org.json.JSONArray
@@ -215,7 +216,7 @@ class DataParser : IDataPerserPresenter {
                 distance = jsonObject.getJSONArray("routes").getJSONObject(0).getJSONArray("legs").getJSONObject(0).getJSONObject("distance").getString("text")
             }
         } catch (e: JSONException) {
-            e.printStackTrace()
+          e.printStackTrace()
         }
 
         durationdata["duration"] = duration
