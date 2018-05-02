@@ -156,6 +156,7 @@ class ShowNavigationDataPage : AppCompatActivity(), DataPageInterface {
         overviewbundle.putString("place_name", data.placeName)
         overviewbundle.putString("place_address", data.placeAddress)
         overviewbundle.putFloat("place_rating", data.rating!!.toFloat())
+        overviewbundle.putSerializable("place_Data",data)
         var navigationDataOverview: NavigationDataOverview = NavigationDataOverview()
 
 

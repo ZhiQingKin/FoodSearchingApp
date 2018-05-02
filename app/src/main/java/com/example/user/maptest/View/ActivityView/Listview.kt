@@ -24,7 +24,6 @@ class Listview : AppCompatActivity(){
         place_array = bundleobj.getSerializable("place_array") as ArrayList<PlaceData>
         place_list_view.adapter = ListViewAdapter(place_array, this)
         place_list_view.setOnItemClickListener(AdapterView.OnItemClickListener { parent, view, position, id ->
-            Log.d("position : ",position.toString())
             displaynextview(position) })
         supportActionBar!!.setDisplayShowHomeEnabled(true)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)

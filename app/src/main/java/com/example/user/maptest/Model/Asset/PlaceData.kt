@@ -23,6 +23,7 @@ class PlaceData : Serializable{
         this.photoreference = photoreference
     }
 
+    constructor()
 
 
 }

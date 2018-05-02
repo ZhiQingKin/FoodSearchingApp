@@ -36,7 +36,7 @@
         <activity
             android:name=".View.ActivityView.MapsActivity"
             android:label="@string/title_activity_maps"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".View.ActivityView.PermissionCheck">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -49,7 +49,8 @@
         <activity
             android:name=".View.ActivityView.NavigationMap"
             android:label="@string/title_activity_navigation_map"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".View.ActivityView.BookmarkListView"></activity>
     </application>
 
 </manifest>

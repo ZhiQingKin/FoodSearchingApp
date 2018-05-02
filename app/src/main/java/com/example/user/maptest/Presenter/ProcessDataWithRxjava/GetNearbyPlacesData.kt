@@ -6,6 +6,7 @@ import android.util.Log
 import com.example.user.maptest.View.ActivityView.MapsActivity
 import com.example.user.maptest.Model.GETURL.DownloadURL
 import com.example.user.maptest.Model.Asset.PlaceData
+import com.example.user.maptest.Model.DatabaseModel.LocationDB
 import com.example.user.maptest.Model.Interface.Model
 import com.example.user.maptest.Presenter.Interface.IDataPerserPresenter
 import com.example.user.maptest.Presenter.Interface.Presenter
@@ -38,7 +39,7 @@ open class GetNearbyPlacesData : Presenter{
     public lateinit var placeData: ArrayList<PlaceData>
     lateinit var markerPlacement:MarkerPlacement
     lateinit var progressDialogController:ProgressDialogController
-    lateinit var model:Model
+    lateinit var downloadURL:DownloadURL
     var parser:IDataPerserPresenter ?=null
 
 
@@ -49,7 +50,7 @@ open class GetNearbyPlacesData : Presenter{
         placeData = ArrayList<PlaceData>()
         markerPlacement = MarkerPlacement()
         progressDialogController = ProgressDialogController(context)
-        model = DownloadURL()
+        downloadURL = DownloadURL()
         parser = DataParser()
     }
 
@@ -64,7 +65,7 @@ open class GetNearbyPlacesData : Presenter{
         return Observable.defer(object : Callable<ObservableSource<out String>> {
             @Throws(Exception::class)
             override fun call(): Observable<String>?{
-                return Observable.just(model.readUrl(url))
+                return Observable.just(downloadURL.readUrl(url))
             }
         })
     }

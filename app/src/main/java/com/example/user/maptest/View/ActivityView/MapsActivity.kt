@@ -42,6 +42,7 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import java.util.HashMap
 import com.google.android.gms.maps.model.LatLng
 import android.widget.TextView
+import com.example.user.maptest.Model.DatabaseModel.LocationDB
 import com.example.user.maptest.Util.AlertDialogController
 import com.example.user.maptest.View.Adapter.MarkerInfoWindowAdapter
 import com.example.user.maptest.View.Adapter.PlaceAutocompleteAdapter
@@ -51,6 +52,7 @@ import com.google.android.gms.location.places.Place
 import com.google.android.gms.location.places.Places
 import com.google.android.gms.maps.GoogleMap
 import com.squareup.picasso.Picasso
+//import io.realm.Realm
 import java.io.IOException
 
 
@@ -93,13 +95,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback ,GoogleApiClient.Co
         checkres.setOnClickListener({
             display_restaurant()
         })
-
         showlist.setOnClickListener({
             presenter.CheckArray()
         })
 
         clearTextBtn.setOnClickListener({
             autocompletesearch.text.clear()
+        })
+
+        bookmarklistbutton.setOnClickListener({
+            displaybookmarkview()
         })
 
     }
@@ -123,6 +128,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback ,GoogleApiClient.Co
         autocompletesearch.setOnEditorActionListener(onEditorActionListener)
         val searchTextWatcher = SearchTextChangeAdapter(autocompletesearch,clearTextBtn)
         autocompletesearch.addTextChangedListener(searchTextWatcher)
+
     }
 
 
@@ -192,6 +198,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback ,GoogleApiClient.Co
     }
 
 
+
     override fun CheckGooglePlayServices() : Boolean {
         var googleAPI:GoogleApiAvailability = GoogleApiAvailability.getInstance();
         var result:Int = googleAPI.isGooglePlayServicesAvailable(this);
@@ -212,6 +219,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback ,GoogleApiClient.Co
         var bundle:Bundle  = Bundle()
         bundle.putSerializable("place_array",presenter.getnearbyPlaces())
         i.putExtras(bundle)
+        i.putExtra("curlat",latitude)
+        i.putExtra("curlng",longitude)
+        startActivity(i)
+    }
+
+    fun displaybookmarkview()
+    {
+        var i : Intent = Intent(applicationContext, BookmarkListView::class.java)
         i.putExtra("curlat",latitude)
         i.putExtra("curlng",longitude)
         startActivity(i)
@@ -299,5 +314,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback ,GoogleApiClient.Co
     override fun onBackPressed() {
         alertDialogController.CreateExitDialog(this)
     }
+
 
 }

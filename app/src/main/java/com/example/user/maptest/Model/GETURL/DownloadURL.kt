@@ -11,11 +11,11 @@ import java.io.IOException
  */
 
 
-class DownloadURL : Model {
+class DownloadURL {
 
 
     @Throws(IOException::class)
-    override fun readUrl(myUrl: String): String? {
+    fun readUrl(myUrl: String): String? {
         var Client : OkHttpClient = OkHttpClient()
         var req : Request = Request.Builder().url(myUrl).build()
         var res : Response ?= null

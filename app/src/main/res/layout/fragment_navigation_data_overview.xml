@@ -11,14 +11,30 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/TextPlaceName"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/border"
-            android:text="Name :"
-            android:textColor="@color/colorBlack"
-            android:textSize="16dp" />
+            android:orientation="horizontal"
+            android:background="@drawable/border">
+            <TextView
+                android:id="@+id/TextPlaceName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Name :"
+                android:textColor="@color/colorBlack"
+                android:layout_marginRight="15dp"
+                android:textSize="16dp" />
+            <CheckBox
+                android:layout_width="30dp"
+                android:layout_height="40dp"
+                android:id="@+id/bookmarkButton"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignRight="@+id/TextPlaceName"
+                android:background="@drawable/bookmarkoff"
+                android:button="@null"/>
+
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/TextAddress"

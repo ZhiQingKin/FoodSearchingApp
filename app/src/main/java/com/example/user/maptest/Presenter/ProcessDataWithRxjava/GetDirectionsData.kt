@@ -34,7 +34,7 @@ open class GetDirectionsData:Presenter{
     internal lateinit var  mMap: GoogleMap
     internal lateinit var url: String
     lateinit var MVPView:ShowDirectionInterface
-    lateinit var model:Model
+    lateinit var downloadURL: DownloadURL
     var progressDialogController: ProgressDialogController
     var parser: IDataPerserPresenter?=null
 
@@ -43,7 +43,7 @@ open class GetDirectionsData:Presenter{
         progressDialogController = ProgressDialogController(context)
         this.mMap=map
         this.MVPView = MVPView
-        model = DownloadURL()
+        downloadURL = DownloadURL()
         parser = DataParser()
     }
 
@@ -58,7 +58,7 @@ open class GetDirectionsData:Presenter{
         return Observable.defer(object : Callable<ObservableSource<out String>> {
             @Throws(Exception::class)
             override fun call(): Observable<String>?{
-                return Observable.just(model.readUrl(url))
+                return Observable.just(downloadURL.readUrl(url))
             }
         })
     }

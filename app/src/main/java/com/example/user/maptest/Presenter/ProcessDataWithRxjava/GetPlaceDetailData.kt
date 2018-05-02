@@ -30,7 +30,7 @@ class GetPlaceDetailData : Presenter {
     lateinit var url :String
     lateinit var MvpView: DataPageInterface
     lateinit var urlGenerator: URLGenerator
-    var model: Model?=null
+    var downloadURL: DownloadURL?=null
     var durationData = HashMap<String,String>()
     var duration:String ?=null
     var distance:String ?=null
@@ -40,7 +40,7 @@ class GetPlaceDetailData : Presenter {
     constructor(MvpView: DataPageInterface) {
         this.MvpView = MvpView
         urlGenerator = URLGenerator()
-        model = DownloadURL()
+        downloadURL = DownloadURL()
         parser = DataParser()
     }
 
@@ -54,7 +54,7 @@ class GetPlaceDetailData : Presenter {
         return Observable.defer(object : Callable<ObservableSource<out String>> {
             @Throws(Exception::class)
             override fun call(): Observable<String>?{
-                return Observable.just(model!!.readUrl(url))
+                return Observable.just(downloadURL!!.readUrl(url))
             }
         })
     }
@@ -89,7 +89,6 @@ class GetPlaceDetailData : Presenter {
                 })
     }
 
-
     public override fun GetDuration(url:String,type:String)
     {
         this.url = url
@@ -102,7 +101,7 @@ class GetPlaceDetailData : Presenter {
                     }
 
                     override fun onNext(value: String) {
-                        Log.d("value",value)
+                       // Log.d("value",value)
                         durationData = parser!!.parseDuration(value)
                         duration = durationData["duration"]
                         distance = durationData["distance"]
