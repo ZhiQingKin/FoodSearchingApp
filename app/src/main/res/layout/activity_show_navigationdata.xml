@@ -51,10 +51,10 @@
             android:id="@+id/NavigationTBL"
             android:layout_height="match_parent"
             android:layout_weight="30"
-            app:tabBackground="@color/colorBlack"
+            app:tabBackground="@color/colorLightBlue"
             app:tabGravity="fill"
             app:tabMode="fixed"
-            app:tabSelectedTextColor="@color/colorGold"
+            app:tabSelectedTextColor="#FFFF00"
             app:tabTextColor="@color/colorWhite">
 
         </android.support.design.widget.TabLayout>

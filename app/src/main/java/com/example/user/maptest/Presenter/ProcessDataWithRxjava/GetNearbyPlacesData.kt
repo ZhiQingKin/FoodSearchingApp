@@ -1,7 +1,10 @@
 package com.example.user.maptest.Presenter.ProcessDataWithRxjava
 
 import android.app.ProgressDialog
+import android.app.Service
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.util.Log
 import com.example.user.maptest.View.ActivityView.MapsActivity
 import com.example.user.maptest.Model.GETURL.DownloadURL
@@ -11,6 +14,7 @@ import com.example.user.maptest.Model.Interface.Model
 import com.example.user.maptest.Presenter.Interface.IDataPerserPresenter
 import com.example.user.maptest.Presenter.Interface.Presenter
 import com.example.user.maptest.Presenter.Util.DataParser
+import com.example.user.maptest.Util.CheckInternetConnection
 import com.example.user.maptest.Util.MarkerPlacement
 import com.example.user.maptest.Util.ProgressDialogController
 import com.example.user.maptest.View.Interface.MainViewInterface
@@ -24,8 +28,7 @@ import java.util.HashMap
 import io.reactivex.ObservableSource
 import java.util.concurrent.Callable
 import io.reactivex.disposables.Disposable
-
-
+import java.util.concurrent.TimeUnit
 
 
 /**
@@ -41,6 +44,8 @@ open class GetNearbyPlacesData : Presenter{
     lateinit var progressDialogController:ProgressDialogController
     lateinit var downloadURL:DownloadURL
     var parser:IDataPerserPresenter ?=null
+    lateinit var context:Context
+    lateinit var checkInternetConnection: CheckInternetConnection
 
 
     constructor(mMap: GoogleMap?, context: Context,MVPView: MainViewInterface) {
@@ -52,6 +57,8 @@ open class GetNearbyPlacesData : Presenter{
         progressDialogController = ProgressDialogController(context)
         downloadURL = DownloadURL()
         parser = DataParser()
+        this.context = context
+        checkInternetConnection = CheckInternetConnection(context)
     }
 
     public override fun seturl(url:String)
@@ -70,11 +77,22 @@ open class GetNearbyPlacesData : Presenter{
         })
     }
 
+    fun createObservableinternetcheck(): Observable<Long> {
+        //Could use fromCallable
+        return Observable.defer(object : Callable<ObservableSource<out Long>> {
+            @Throws(Exception::class)
+            override fun call(): Observable<Long>?{
+                return Observable.interval(1000,5000,TimeUnit.MILLISECONDS)
+            }
+        })
+    }
+
     public override fun startthreat()
     {
         createObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .retry()
                 .subscribe(object : Observer<String> {
                     override fun onSubscribe(d: Disposable) {
                        // Log.d(TAG, "onSubscribe: $d")
@@ -93,6 +111,38 @@ open class GetNearbyPlacesData : Presenter{
 
                     override fun onComplete() {
                         progressDialogController.progressBarHide()
+                    }
+                })
+    }
+
+
+    override fun CheckConnection() {
+        createObservableinternetcheck()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(object : Observer<Long> {
+                    override fun onComplete() {
+                        //To change body of created functions use File | Settings | File Templates.
+                    }
+
+                    override fun onSubscribe(d: Disposable) {
+                        //To change body of created functions use File | Settings | File Templates.
+                    }
+
+                    override fun onNext(t: Long) {
+                        var test = checkInternetConnection.getConnection()
+                        if(test)
+                        {
+
+                        }
+                        else
+                        {
+                            MVPView.NoInternet()
+                        }
+                    }
+
+                    override fun onError(e: Throwable) {
+                         //To change body of created functions use File | Settings | File Templates.
                     }
                 })
     }

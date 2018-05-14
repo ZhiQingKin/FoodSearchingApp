@@ -34,18 +34,18 @@ class MarkerInfoWindowAdapter : GoogleMap.InfoWindowAdapter {
         val v = layoutInflater.inflate(R.layout.marker_info, null)
         val markerImage = v.findViewById<ImageView>(R.id.MarkerIcon)
         if (marker.snippet == "error") {
-            Picasso.get().load(R.drawable.errorloadimage).resize(200,200).into(markerImage, MarkerCallback(marker))
+            Picasso.get().load(R.drawable.errorloadimage).resize(200,100).into(markerImage, MarkerCallback(marker))
             val markerText = v.findViewById<TextView>(R.id.MarketResName)
             markerText.paintFlags = Paint.UNDERLINE_TEXT_FLAG
             markerText.text = marker.title
         } else if (marker.snippet == "user") {
-            Picasso.get().load(R.drawable.user).resize(200,200).into(markerImage, MarkerCallback(marker))
+            Picasso.get().load(R.drawable.user).resize(200,100).into(markerImage, MarkerCallback(marker))
             val markerText = v.findViewById<TextView>(R.id.MarketResName)
             markerText.text = marker.title
             markerText.setTextColor(R.color.colorBlack)
         } else {
             val photourl: String = urlGenerator!!.geturl_photoreference(marker.snippet)
-            Picasso.get().load(photourl).resize(200,200).into(markerImage, MarkerCallback(marker))
+            Picasso.get().load(photourl).resize(200,100).into(markerImage, MarkerCallback(marker))
             val markerText = v.findViewById<TextView>(R.id.MarketResName)
             markerText.paintFlags = Paint.UNDERLINE_TEXT_FLAG
             markerText.text = marker.title

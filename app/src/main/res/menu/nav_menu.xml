@@ -1,0 +1,22 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_checklocation"
+            android:icon="@drawable/searchiconbutton"
+            android:title="Check Self Location" />
+        <item
+            android:id="@+id/nav_showlist"
+            android:icon="@drawable/iconforbutton"
+            android:title="Show Nearby Restaurant List" />
+        <item
+            android:id="@+id/nav_bookmark"
+            android:icon="@drawable/bookmarkon"
+            android:title="Bookmark" />
+
+    </group>
+
+
+</menu>

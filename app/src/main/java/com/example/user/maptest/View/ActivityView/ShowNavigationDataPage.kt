@@ -51,7 +51,7 @@ class ShowNavigationDataPage : AppCompatActivity(), DataPageInterface {
         progressDialogController.progressBarShow()
         data = intent.getSerializableExtra("place_data") as PlaceData
         urlGenerator = URLGenerator()
-        presenter = GetPlaceDetailData(this)
+        presenter = GetPlaceDetailData(this,this)
         presenter.seturl(urlGenerator.geturl_place_detail(data.place_id!!))
         presenter.startthreat()
         currentlatitude = intent.getDoubleExtra("curlat", 0.1)

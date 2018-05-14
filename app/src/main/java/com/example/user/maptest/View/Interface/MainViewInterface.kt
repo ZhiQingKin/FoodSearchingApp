@@ -11,4 +11,5 @@ interface MainViewInterface {
     fun displayerror()
     public fun showNearbyPlaces(nearbyPlaceList: List<HashMap<String, String>>): ArrayList<PlaceData>
     fun geoLocate()
+    fun NoInternet()
 }

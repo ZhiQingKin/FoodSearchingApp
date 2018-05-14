@@ -11,6 +11,7 @@ import android.widget.TextView
 import com.example.user.maptest.Model.Asset.PlaceData
 import com.example.user.maptest.Model.GETURL.URLGenerator
 import com.example.user.maptest.R
+import com.example.user.maptest.View.ViewHolder.BookmarkListHolder
 import com.squareup.picasso.Picasso
 
 class BookmarkListAdapter : BaseAdapter {
@@ -27,23 +28,30 @@ class BookmarkListAdapter : BaseAdapter {
     }
 
     override fun getView(pos: Int, cview: View?, viewG: ViewGroup?): View {
-        val layoutInflater = LayoutInflater.from(mcontext)
-        val rowMain = layoutInflater.inflate(R.layout.bookmarklayout,viewG,false)
-        val PlaceNameText = rowMain.findViewById<TextView>(R.id.textbookmarkPlaceNameList)
-        PlaceNameText.text = places[pos].placeName!!
-        val PlaceAddress = rowMain.findViewById<TextView>(R.id.textbookmarkPlaceAddress)
-        PlaceAddress.text = places[pos].placeAddress
-        val RestaurantImage = rowMain.findViewById<ImageView>(R.id.bookmarklistImageview)
+        var bookmarkListHolder:BookmarkListHolder ?=null
+        var rowMain = cview
+        if(rowMain==null)
+        {
+            val layoutInflater = LayoutInflater.from(mcontext)
+            rowMain = layoutInflater.inflate(R.layout.bookmarklayout,viewG,false)
+            bookmarkListHolder = BookmarkListHolder(rowMain)
+            rowMain!!.tag = bookmarkListHolder
+        }
+        else
+        {
+            bookmarkListHolder = rowMain!!.tag as BookmarkListHolder
+        }
+
+        bookmarkListHolder.PlaceNameText.text = places[pos].placeName!!
+        bookmarkListHolder.PlaceAddress.text = places[pos].placeAddress
         if (places[pos].photoreference != "error") {
             val url: String = urlGenerator.geturl_photoreference(places[pos].photoreference!!)
-            Picasso.get().load(url).fit().into(RestaurantImage)
+            Picasso.get().load(url).fit().into(bookmarkListHolder.RestaurantImage)
         } else {
-            Picasso.get().load(R.drawable.errorloadimage).fit().into(RestaurantImage)
+            Picasso.get().load(R.drawable.errorloadimage).fit().into(bookmarkListHolder.RestaurantImage)
         }
-        val ResRating = rowMain.findViewById<RatingBar>(R.id.bookmarkResRating)
-        ResRating.rating = places[pos].rating!!.toFloat()
-        val Ratingtext = rowMain.findViewById<TextView>(R.id.bookmarkratingtext)
-        Ratingtext.text = places[pos].rating
+        bookmarkListHolder.ResRating.rating = places[pos].rating!!.toFloat()
+        bookmarkListHolder.Ratingtext.text = places[pos].rating
         return rowMain
     }
 

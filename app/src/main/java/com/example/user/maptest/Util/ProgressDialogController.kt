@@ -8,6 +8,7 @@ class ProgressDialogController {
 
     constructor(context: Context) {
         progressDialog = ProgressDialog(context)
+        progressDialog.setCancelable(false)
         progressDialog.setTitle("Loading...")
     }
 

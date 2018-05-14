@@ -11,5 +11,6 @@ interface Presenter {
     public fun GetDuration(url: String, type: String)
     public fun CheckArray()
     public fun CheckWithinList(Name: String): PlaceData?
+    public fun CheckConnection()
 
 }

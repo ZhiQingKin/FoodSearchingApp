@@ -1,8 +1,11 @@
 package com.example.user.maptest.Presenter.ProcessDataWithRxjava
 
+import android.app.Activity
 import android.app.admin.DeviceAdminReceiver
+import android.content.Context
 import android.net.wifi.WifiManager
 import android.provider.ContactsContract
+import android.support.annotation.MainThread
 import android.util.Log
 import com.example.user.maptest.Model.Asset.PlaceData
 import com.example.user.maptest.Model.GETURL.DownloadURL
@@ -12,6 +15,7 @@ import com.example.user.maptest.Model.Interface.Model
 import com.example.user.maptest.Presenter.Interface.IDataPerserPresenter
 import com.example.user.maptest.Presenter.Interface.Presenter
 import com.example.user.maptest.Presenter.Util.DataParser
+import com.example.user.maptest.Util.CheckInternetConnection
 import com.example.user.maptest.View.ActivityView.ShowNavigationDataPage
 import com.example.user.maptest.View.Interface.DataPageInterface
 import io.reactivex.Observable
@@ -35,13 +39,19 @@ class GetPlaceDetailData : Presenter {
     var duration:String ?=null
     var distance:String ?=null
     var parser: IDataPerserPresenter?=null
+    lateinit var checkInternetConnection: CheckInternetConnection
+    var context:Context?=null
 
 
-    constructor(MvpView: DataPageInterface) {
+
+    constructor(MvpView: DataPageInterface,context: Context) {
         this.MvpView = MvpView
         urlGenerator = URLGenerator()
         downloadURL = DownloadURL()
         parser = DataParser()
+        this.context = context
+        checkInternetConnection = CheckInternetConnection(context)
+
     }
 
     override fun seturl(url: String) {
@@ -77,7 +87,7 @@ class GetPlaceDetailData : Presenter {
                     }
 
                     override fun onError(e: Throwable) {
-                        //  Log.e(TAG, "onError: ", e)
+                        this@GetPlaceDetailData.CheckConnection()
                     }
 
                     override fun onComplete(){
@@ -88,6 +98,16 @@ class GetPlaceDetailData : Presenter {
                     }
                 })
     }
+    fun createObservableCheckConnecttion(): Observable<Boolean> {
+        //Could use fromCallable
+        return Observable.defer(object : Callable<ObservableSource<out Boolean>> {
+            @Throws(Exception::class)
+            override fun call(): Observable<Boolean>?{
+                return Observable.just(checkInternetConnection.getConnection())
+            }
+        })
+    }
+
 
     public override fun GetDuration(url:String,type:String)
     {
@@ -101,10 +121,16 @@ class GetPlaceDetailData : Presenter {
                     }
 
                     override fun onNext(value: String) {
-                       // Log.d("value",value)
                         durationData = parser!!.parseDuration(value)
                         duration = durationData["duration"]
                         distance = durationData["distance"]
+                    }
+
+                    override fun onError(e: Throwable) {
+                          //Log.d( "onError: ", "eror")
+                    }
+
+                    override fun onComplete() {
                         if(type=="driving")
                         {
                             MvpView.checkdriving(duration,distance)
@@ -115,15 +141,42 @@ class GetPlaceDetailData : Presenter {
                         }
                         MvpView.displayDuration()
                     }
+                })
+    }
+
+
+    override fun CheckConnection(){
+        var connected:Boolean = false
+        createObservableCheckConnecttion()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .repeatUntil({
+                    connected
+                })
+                .subscribe(object : Observer<Boolean>{
+                    override fun onSubscribe(d: Disposable) {
+                        //To change body of created functions use File | Settings | File Templates.
+                    }
+
+                    override fun onNext(t: Boolean) {
+                        if (t)
+                        {
+                            connected=true
+                            (context as Activity).recreate()
+                        }
+                    }
 
                     override fun onError(e: Throwable) {
-                        //  Log.e(TAG, "onError: ", e)
+                         //To change body of created functions use File | Settings | File Templates.
                     }
 
                     override fun onComplete() {
-
+                        //To change body of created functions use File | Settings | File Templates.
                     }
+
+
                 })
+
     }
 
     override fun getnearbyPlaces(): ArrayList<PlaceData> {

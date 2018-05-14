@@ -13,7 +13,10 @@ import android.location.Location
 import android.media.Image
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.design.widget.NavigationView
 import android.support.v4.content.ContextCompat
+import android.support.v4.view.GravityCompat
+import android.support.v7.app.ActionBarDrawerToggle
 import android.text.Editable
 import android.text.TextWatcher
 import com.google.android.gms.common.ConnectionResult
@@ -25,6 +28,7 @@ import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
 import android.widget.Toast
 import android.util.Log
+import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import com.example.user.maptest.Model.Asset.PlaceData
@@ -43,6 +47,7 @@ import java.util.HashMap
 import com.google.android.gms.maps.model.LatLng
 import android.widget.TextView
 import com.example.user.maptest.Model.DatabaseModel.LocationDB
+import com.example.user.maptest.R.id.toolbar
 import com.example.user.maptest.Util.AlertDialogController
 import com.example.user.maptest.View.Adapter.MarkerInfoWindowAdapter
 import com.example.user.maptest.View.Adapter.PlaceAutocompleteAdapter
@@ -52,12 +57,16 @@ import com.google.android.gms.location.places.Place
 import com.google.android.gms.location.places.Places
 import com.google.android.gms.maps.GoogleMap
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.apptoolbar.*
+import kotlinx.android.synthetic.main.navigation_drawer_header.*
+import kotlinx.android.synthetic.main.navigation_drawer_header.view.*
+import kotlinx.android.synthetic.main.navigationdrawer_main.*
 //import io.realm.Realm
 import java.io.IOException
 
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback ,GoogleApiClient.ConnectionCallbacks,GoogleApiClient.OnConnectionFailedListener,LocationListener
-,GoogleMap.OnMapClickListener,MainViewInterface,GoogleMap.OnInfoWindowClickListener {
+,GoogleMap.OnMapClickListener,MainViewInterface,GoogleMap.OnInfoWindowClickListener, NavigationView.OnNavigationItemSelectedListener{
     private lateinit var mMap: GoogleMap
     private lateinit var client: GoogleApiClient
     private lateinit var locationRequest: LocationRequest
@@ -73,10 +82,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback ,GoogleApiClient.Co
     lateinit var markerPlacement: MarkerPlacement
     lateinit var alertDialogController: AlertDialogController
     var latLngBounds: LatLngBounds = LatLngBounds(LatLng(-40.0, -168.0), LatLng(71.0, 136.0))
+    var MapClickable:Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_maps)
+        setContentView(R.layout.navigationdrawer_main)
         if (!CheckGooglePlayServices()) {
             Log.d("onCreate", "Finishing test case since Google Play Services are not available");
             finish();
@@ -92,21 +102,30 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback ,GoogleApiClient.Co
         cameraMovement = CameraMovement()
         markerPlacement = MarkerPlacement()
         alertDialogController = AlertDialogController()
-        checkres.setOnClickListener({
-            display_restaurant()
+        val toggle = ActionBarDrawerToggle(
+                this, drawer_layout,toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        drawer_layout.addDrawerListener(toggle)
+        toggle.syncState()
+        nav_view.setNavigationItemSelectedListener(this)
+        nav_view.getHeaderView(0).MapSwitch.setOnCheckedChangeListener({
+            compoundButton, isChecked ->
+            if (isChecked)
+            {
+                Toast.makeText(this,"On map click function is on", Toast.LENGTH_SHORT).show()
+                MapClickable=true
+            }
+            else
+            {
+                Toast.makeText(this,"On map click function is off", Toast.LENGTH_SHORT).show()
+                MapClickable=false
+            }
         })
-        showlist.setOnClickListener({
+        showlistviewfab.setOnClickListener({
             presenter.CheckArray()
         })
-
         clearTextBtn.setOnClickListener({
             autocompletesearch.text.clear()
         })
-
-        bookmarklistbutton.setOnClickListener({
-            displaybookmarkview()
-        })
-
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -119,6 +138,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback ,GoogleApiClient.Co
             buildGoogleApiClient()
             mMap.setMyLocationEnabled(true)
         }
+        presenter.CheckConnection()
         mMap.setOnInfoWindowClickListener(this)
         var markerInfoWinndowAdapter = MarkerInfoWindowAdapter(this)
         mMap.setInfoWindowAdapter(markerInfoWinndowAdapter)
@@ -238,7 +258,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback ,GoogleApiClient.Co
     }
 
     override fun onMapClick(pos: LatLng?) {
-        displayonmap(pos)
+        if(MapClickable)
+        {
+            displayonmap(pos)
+        }
     }
 
     override fun displayonmap(latlng:LatLng?)
@@ -315,5 +338,27 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback ,GoogleApiClient.Co
         alertDialogController.CreateExitDialog(this)
     }
 
+    override fun NoInternet() {
+        Toast.makeText(this,"Unable to connect to the internet, \n Please check your internet connection ",Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        // Handle navigation view item clicks here.
+        when (item.itemId) {
+            R.id.nav_checklocation -> {
+                display_restaurant()
+            }
+            R.id.nav_showlist -> {
+                presenter.CheckArray()
+            }
+            R.id.nav_bookmark -> {
+                displaybookmarkview()
+            }
+
+        }
+
+        drawer_layout.closeDrawer(GravityCompat.START)
+        return true
+    }
 
 }

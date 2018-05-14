@@ -10,6 +10,7 @@ import android.widget.RatingBar
 import android.widget.TextView
 import com.example.user.maptest.Model.Asset.Review
 import com.example.user.maptest.R
+import com.example.user.maptest.View.ViewHolder.ReviewListHolder
 import com.squareup.picasso.Picasso
 
 class ReviewViewAdapter : BaseAdapter {
@@ -23,18 +24,29 @@ class ReviewViewAdapter : BaseAdapter {
 
 
     override fun getView(pos: Int, view: View?, viewG: ViewGroup?): View {
-        val layoutInflater = LayoutInflater.from(mcontext)
-        val rowMain = layoutInflater.inflate(R.layout.reviewlayout, viewG, false)
-        val Profile_Pic = rowMain.findViewById<ImageView>(R.id.profilepic)
-        Picasso.get().load(reviews[pos].photo_url).fit().into(Profile_Pic)
-        val UserName = rowMain.findViewById<TextView>(R.id.username)
-        UserName.text = reviews[pos].username
-        val LastComentDuration = rowMain.findViewById<TextView>(R.id.commentperoid)
-        LastComentDuration.text = reviews[pos].commenttime
-        val CommentInfo = rowMain.findViewById<TextView>(R.id.commentinfo)
-        CommentInfo.text = reviews[pos].usercomment + "\n"
-        val UserRating = rowMain.findViewById<RatingBar>(R.id.RatingBarUser)
-        UserRating.rating = reviews[pos].userrating!!
+        var rowMain = view
+        var reviewListHolder:ReviewListHolder ?=null
+
+        if(rowMain==null)
+        {
+            val layoutInflater = LayoutInflater.from(mcontext)
+            rowMain = layoutInflater.inflate(R.layout.reviewlayout, viewG, false)
+            reviewListHolder = ReviewListHolder(rowMain)
+            rowMain!!.tag = reviewListHolder
+        }
+        else
+        {
+            reviewListHolder = rowMain!!.tag as ReviewListHolder
+        }
+
+
+        Picasso.get().load(reviews[pos].photo_url).fit().into(reviewListHolder.Profile_Pic)
+        reviewListHolder.UserName.text = reviews[pos].username
+        reviewListHolder.LastComentDuration.text = reviews[pos].commenttime
+        reviewListHolder.CommentInfo.text = reviews[pos].usercomment + "\n"
+        reviewListHolder.UserRating.rating = reviews[pos].userrating!!
+
+
         return rowMain
     }
 
