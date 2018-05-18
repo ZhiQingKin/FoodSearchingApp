@@ -42,6 +42,7 @@ In addition, there are two button which is Google Navigation and Navigation:
 2) Navigation - a simple navigation to show user the route through the map and will refresh when changed
 
 Libraries used :
+
 1)Kotlin
 
 2)Rxjava
