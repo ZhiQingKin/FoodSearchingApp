@@ -36,23 +36,23 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".View.ActivityView.MapsActivity"
+            android:name=".view.activityview.MapsActivity"
             android:label="@string/title_activity_maps"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".View.ActivityView.PermissionCheck">
+        <activity android:name=".view.activityview.PermissionCheck">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".View.ActivityView.ShowNavigationDataPage" />
-        <activity android:name=".View.ActivityView.Listview" />
+        <activity android:name=".view.activityview.ShowNavigationDataPage" />
+        <activity android:name=".view.activityview.Listview" />
         <activity
-            android:name=".View.ActivityView.NavigationMap"
+            android:name=".view.activityview.NavigationMap"
             android:label="@string/title_activity_navigation_map"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".View.ActivityView.BookmarkListView"></activity>
+        <activity android:name=".view.activityview.BookmarkListView"></activity>
     </application>
 
 </manifest>

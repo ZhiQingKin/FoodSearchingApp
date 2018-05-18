@@ -4,7 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".View.ActivityView.MapsActivity">
+    tools:context=".view.activityview.MapsActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -58,7 +58,7 @@
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".View.ActivityView.MapsActivity" />
+            tools:context=".view.activityview.MapsActivity" />
 
 
         <android.support.design.widget.FloatingActionButton
