@@ -40,3 +40,24 @@ In addition, there are two button which is Google Navigation and Navigation:
 
 1) Google Navigation - use the googlemap navigation to take user to the destination
 2) Navigation - a simple navigation to show user the route through the map and will refresh when changed
+
+Libraries used :
+1)Kotlin
+
+2)Rxjava
+
+3)OkHttp
+
+4)RecycleView
+
+5)Realm
+
+6)Picasso
+
+7)Gson
+
+8)Google Place Api
+
+9)Google Navigation Api
+
+10)romandanylyk Page Indicator
